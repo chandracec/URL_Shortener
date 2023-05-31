@@ -1,9 +1,38 @@
+const express = require('express');
 const mongoose = require('mongoose')
-const UrlSchema = mongoose.Schema({
-  urlCode: {require:true,unique:true,trim:true,lowercase:true},
-})
+const validUrl = require('valid-url');
+  
 
-module.exports = mongoose.model('Url', UrlSchema)
+const urlSchema = new mongoose.Schema({
+  urlCode: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true
+  },
+  longUrl: {
+    type: String,
+    required: true,
+    // validate: {
+    //   validator: function(value) {
+    //     // Regular expression to validate URL format
+    //     // const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
+    //     return urlRegex.test(value);
+    //   },
+    //   message: 'Invalid URL format'
+    // }
+  },
+  shortUrl: {
+    type: String,
+    required: true,
+    unique: true
+  }
+});
+
+const Url = mongoose.model('Url', urlSchema);
+
+module.exports = Url;
 
 
 
