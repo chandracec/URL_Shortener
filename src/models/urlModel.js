@@ -14,14 +14,14 @@ const urlSchema = new mongoose.Schema({
   longUrl: {
     type: String,
     required: true,
-    validate: {
-      validator: function(value) {
-        // Regular expression to validate URL format
-         const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
-        return urlRegex.test(value);
-      },
-      message: 'Invalid URL format'
-    }
+    // validate: {
+    //   validator: function(value) {
+    //     // Regular expression to validate URL format
+    //      const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
+    //     return urlRegex.test(value);
+    //   },
+    //   message: 'Invalid URL format'
+    // }
   },
   shortUrl: {
     type: String,
