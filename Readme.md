@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Technetium
 
 ## Scalable URL Shortner Project Requirement
@@ -99,3 +100,5 @@ If you haven’t used tinyurl.com before, please try creating a new shortened UR
 
 ```
 
+=======
+>>>>>>> 1c47def0abbb61b1f5bdf5b94c364a695cc21808
