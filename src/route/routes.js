@@ -3,6 +3,8 @@ const Router=express.Router();
 const urlModel = require('../controller/control')
 
 Router.post("/url/shorten",urlModel.shortingUrl)
-Router.get("/url/:urlCode",urlModel.getUrl)
-
-module.exports =Router;
+Router.get("/:urlCode",urlModel.getUrl)
+Router.use("*",(req,res)=>{
+    return res.status(404).send("invalid urls")
+})
+module.exports =Router
