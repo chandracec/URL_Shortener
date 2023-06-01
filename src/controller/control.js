@@ -8,6 +8,8 @@ const shortingUrl=async function(req,res){
        
        const longUrl=req.body.longUrl
        
+       if(!longUrl) return res.status(400).send({status:false , message:"Please provide URL"})
+       
        if(!validUrl.isWebUri(longUrl)){
        return res.status(400).send({status:false,message:"Your URL is not a valid URL"})
        }
@@ -20,6 +22,7 @@ const shortingUrl=async function(req,res){
     
        const urlCode=shortId.generate(longUrl)
        const shortUrl=`http://localhost:3000/${urlCode}`
+
         
        const newUrl=await urlModel.create({longUrl,shortUrl,urlCode});
        return res.status(200).send({status:true,data:newUrl})
@@ -38,7 +41,7 @@ try{
         return res.status(400).send({status:false,message:"please provide a valid urlCode"})
     }
     //return res.status(200).send({status:true,data:url.longUrl})
-    return res.status(302).redirect(url.longUrl)
+    return res.status(302).redirect(url.longUrl )
 }catch(error){
     return res.status(500).send({status:false,message:error.message})
 }
