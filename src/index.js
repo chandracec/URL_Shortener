@@ -16,4 +16,4 @@ mongoose.connect('mongodb+srv://saurabhdigambar8:X1UED3V4eKh2u9M4@cluster0.tlt0r
 .catch(error=>console.log(error.message))
 
 app.use("/",route)
-app.listen(PORT,()=>{console.log(`Database Sonnected on ${PORT}`)})
+app.listen(PORT,()=>{console.log(`Database Connected on ${PORT}`)})
