@@ -4,7 +4,7 @@ const mongoose=require('mongoose');
 
 const route=require('./route/routes')
 
-const PORT=4000
+const PORT=3000
 const app=express();
 
 app.use(bodyPArser.urlencoded({extended:true}));

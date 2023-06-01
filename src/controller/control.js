@@ -37,8 +37,8 @@ try{
     if(!url){
         return res.status(400).send({status:false,message:"please provide a valid urlCode"})
     }
-    return res.status(200).send({status:true,data:url.longUrl})
-   // return res.status(302).redirect(url.longUrl)
+    //return res.status(200).send({status:true,data:url.longUrl})
+    return res.status(302).redirect(url.longUrl)
 }catch(error){
     return res.status(500).send({status:false,message:error.message})
 }
