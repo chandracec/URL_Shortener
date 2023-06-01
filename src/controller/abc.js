@@ -10,18 +10,24 @@ const client = redis.createClient({
     port: 12531,
     password: 'TzQYQ4tNsBYJqRAVU5hZZt46NxmDSWXm'
 });
+
+client.on('error', (error) => {
+    console.error('Redis Error:', error);
+});
+
 client.on('connect', () => {
     console.log('Connected to Redis');
 });
 
-client.on('error', (error) => {
-  console.error('Redis Error:', error);
+client.on('ready', () => {
+    console.log('Redis is ready to accept commands');
 });
+ 
 const getData = promisify(client.get).bind(client);
 const setData = promisify(client.set).bind(client);
 
 // Creating short URL for long URL
-const shortUrl = async function (req, res) {
+const shortingUrl = async function (req, res) {
     try {
         const longUrl = req.body.longUrl;
         if (!longUrl) return res.status(400).send({ status: false, message: "Please provide a URL" });
@@ -30,8 +36,8 @@ const shortUrl = async function (req, res) {
             return res.status(400).send({ status: false, message: "Your URL is not valid" });
         }
 
-        const cachedData = await getData(`${urlCode}`);
-        cachedData = JSON.parse(cachedData);
+        const cachedData = await getData(`${longUrl}`);
+        cachedData = JSON.parse(cachedData)
         
         if (cachedData) {
             return res.send({ status: true, data: cachedData });
@@ -42,17 +48,12 @@ const shortUrl = async function (req, res) {
             return res.status(200).send({ status: true, data: urlExists });
         }
 
-        // const urlCode = shortId.generate(longUrl);
-        
+        const urlCode = shortId.generate(longUrl);
         const shortUrl = `http://localhost:3000/${urlCode}`;
 
         const newUrl = await urlModel.create({ longUrl, shortUrl, urlCode });
 
-        try {
-            await setData(longUrl, shortUrl, 'EX', 10);
-        } catch (error) {
-            console.error('Redis SET Error:', error);
-        }
+       const wait= await setData(longUrl, shortUrl, 'EX', 10);
 
         return res.status(200).send({ status: true, data: newUrl });
     } catch (error) {
@@ -66,8 +67,6 @@ const getUrl = async function (req, res) {
         const urlCode = req.params.urlCode;
 
         const cachedData = await getData(`${urlCode}`);
-        cachedData = JSON.parse(cachedData);
-
         if (cachedData) {
             return res.send({ status: true, data: cachedData });
         }
@@ -83,4 +82,4 @@ const getUrl = async function (req, res) {
     }
 }
 
-module.exports = { shortUrl, getUrl };
+module.exports = { shortingUrl, getUrl };

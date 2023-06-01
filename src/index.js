@@ -1,19 +1,20 @@
-const express=require('express');
-const bodyPArser = require('body-parser');
-const mongoose=require('mongoose'); 
+const express = require("express");
+const { default: mongoose } = require("mongoose");
+const route = require("../src/route/routes.js");
 
-const route=require('./route/routes')
+mongoose.set("strictQuery", true);
+const app = express();
 
-const PORT=3000
-const app=express();
+app.use(express.json());
 
-app.use(bodyPArser.urlencoded({extended:true}));
+ mongoose.connect(
+      "mongodb+srv://saurabhdigambar8:X1UED3V4eKh2u9M4@cluster0.tlt0rzr.mongodb.net/group3Database",
+      { useNewUrlParser: true }
+    );
+    console.log("database connected");
 
-app.use(bodyPArser.json());
+app.use("/", route);
 
-mongoose.connect('mongodb+srv://saurabhdigambar8:X1UED3V4eKh2u9M4@cluster0.tlt0rzr.mongodb.net/group3Database',{useNewUrlParser:true,useUnifiedTopology:true})
-.then(()=>{console.log("Server Started ")})
-.catch(error=>console.log(error.message))
-
-app.use("/",route)
-app.listen(PORT,()=>{console.log(`Database Connected on ${PORT}`)})
+app.listen(3000, () => {
+  console.log(`app start on 3000`);
+});

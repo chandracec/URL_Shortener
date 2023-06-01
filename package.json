@@ -10,11 +10,15 @@
     "author": "Saurabh Digambar, Chandrakant Tiwari, Jasmeen  Desai,Kashi Sharma ",
     "license": "ISC",
     "dependencies": {
+        "axios": "^1.4.0",
         "body-parser": "^1.20.2",
         "express": "^4.18.2",
         "mongoose": "^7.2.2",
+        "node-fetch": "^3.3.1",
         "nodemon": "^2.0.22",
+        "redis": "^4.6.7",
         "shortid": "^2.2.16",
+        "utils": "^0.3.1",
         "valid-url": "^1.0.9",
         "validator": "^13.9.0"
     }
