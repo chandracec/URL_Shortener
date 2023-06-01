@@ -1,1 +1,21 @@
-{"name":"url_shortner_project","version":"1.0.0","description":"In this project we are going to create shortner URL website.","main":"index.js","scripts":{"test":"echo \"Error: no test specified\" && exit 1","start":"npx nodemon src/index.js"},"author":"Saurabh Digambar, Chandrakant Tiwari, Jasmeen  Desai,Kashi Sharma ","license":"ISC","dependencies":{"body-parser":"^1.20.2","express":"^4.18.2","mongoose":"^7.2.2","nodemon":"^2.0.22","shortid":"^2.2.16","valid-url":"^1.0.9","validator":"^13.9.0"}}
+{
+    "name": "url_shortner_project",
+    "version": "1.0.0",
+    "description": "In this project we are going to create shortner URL website.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "npx nodemon src/index.js"
+    },
+    "author": "Saurabh Digambar, Chandrakant Tiwari, Jasmeen  Desai,Kashi Sharma ",
+    "license": "ISC",
+    "dependencies": {
+        "body-parser": "^1.20.2",
+        "express": "^4.18.2",
+        "mongoose": "^7.2.2",
+        "nodemon": "^2.0.22",
+        "shortid": "^2.2.16",
+        "valid-url": "^1.0.9",
+        "validator": "^13.9.0"
+    }
+}

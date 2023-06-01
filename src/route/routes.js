@@ -5,4 +5,4 @@ const urlModel = require('../controller/control')
 Router.post("/url/shorten",urlModel.shortingUrl)
 Router.get("/url/:urlCode",urlModel.getUrl)
 
-module.exports =Router
+module.exports =Router;
