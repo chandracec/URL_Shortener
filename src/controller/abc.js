@@ -1,85 +1,110 @@
-const express = require('express');
+const shortid = require("shortid");
 const urlModel = require("../models/urlModel");
-const validUrl = require('valid-url');
-const shortId = require('shortid');
-const redis = require('redis');
-const { promisify } = require('util');
+const validator = require("validator");
+const redis = require("redis");
+const { promisify } = require("util");
 
-const client = redis.createClient({
-    host: 'redis-12531.c264.ap-south-1-1.ec2.cloud.redislabs.com',
-    port: 12531,
-    password: 'TzQYQ4tNsBYJqRAVU5hZZt46NxmDSWXm'
+
+const redisClient = redis.createClient({
+  host: 'redis-12531.c264.ap-south-1-1.ec2.cloud.redislabs.com',
+  port: 12531,
+  password: 'TzQYQ4tNsBYJqRAVU5hZZt46NxmDSWXm'
 });
 
-client.on('error', (error) => {
-    console.error('Redis Error:', error);
+redisClient.on('error', (error) => {
+  console.error('Redis Error:', error);
 });
 
-client.on('connect', () => {
-    console.log('Connected to Redis');
-});
-
-client.on('ready', () => {
-    console.log('Redis is ready to accept commands');
+redisClient.on('connect', () => {
+  console.log('Connected to Redis');
 });
  
-const getData = promisify(client.get).bind(client);
-const setData = promisify(client.set).bind(client);
+ 
 
-// Creating short URL for long URL
-const shortingUrl = async function (req, res) {
-    try {
-        const longUrl = req.body.longUrl;
-        if (!longUrl) return res.status(400).send({ status: false, message: "Please provide a URL" });
+//2. Prepare the functions for each command
 
-        if (!validUrl.isWebUri(longUrl)) {
-            return res.status(400).send({ status: false, message: "Your URL is not valid" });
-        }
+const setCache = promisify(redisClient.SET).bind(redisClient);
+const getCache = promisify(redisClient.GET).bind(redisClient);
 
-        const cachedData = await getData(`${longUrl}`);
-        cachedData = JSON.parse(cachedData)
+
+const shortUrl = async (req, res) => {
+  try {
+
+      if (Object.keys(req.body) === 0) return res.status(400).send({ status: false, message: "plz send url" });
+
+      let { longUrl } = req.body;
+
+      if (!longUrl) return res.status(400).send({ status: false, msg: "plz provide URL" });
+
+      if (!validator.isURL(longUrl)) return res.status(400).send({ status: false, message: "enter valid Url" });
+
+      let getDataCache = await GET_ASYNC(longUrl)   
+
+      getDataCache = JSON.parse(getDataCache)
+
+      if(getDataCache) 
+      {return res.status(200).send({status:true,msg:"URL exist, this  is coming from cache",data:getDataCache})}
+
+
+
+      let checkUrlExist = await urlModel.findOne({ longUrl: longUrl }).select({ _id: 0, __v: 0 });
+
+      if (checkUrlExist) {
+
+      await SET_ASYNC(`${req.body.longUrl}`,JSON.stringify(checkUrlExist),"EX",100000)
+
+      return res.status(200).send({status: true,message: "URL already exist, this data is comming from database",data: checkUrlExist});
+
+    } 
+    else {
+
+      let shortIdCode = shortid.generate();
+
+      let data = await urlModel.create({urlCode: shortIdCode,longUrl: longUrl,shortUrl: `${req.protocol}://${req.headers.host}/${shortIdCode}`,
+      });
         
-        if (cachedData) {
-            return res.send({ status: true, data: cachedData });
-        }
+      let { _id, __v, ...otherData } = data._doc;
 
-        const urlExists = await urlModel.findOne({ longUrl: longUrl });
-        if (urlExists) {
-            return res.status(200).send({ status: true, data: urlExists });
-        }
+      await SET_ASYNC(longUrl,JSON.stringify(otherData),"EX",100000)
 
-        const urlCode = shortId.generate(longUrl);
-        const shortUrl = `http://localhost:3000/${urlCode}`;
-
-        const newUrl = await urlModel.create({ longUrl, shortUrl, urlCode });
-
-       const wait= await setData(longUrl, shortUrl, 'EX', 10);
-
-        return res.status(200).send({ status: true, data: newUrl });
-    } catch (error) {
-        return res.status(500).send({ status: false, message: error });
+      res.status(201).send({ status: true, data: otherData });
     }
+
+  } catch (error) {
+
+    console.log("error in shortUrl", error.message);
+
+    res.status(500).send({ error: error.message });
+  }
 };
 
-// Getting URL from the database
-const getUrl = async function (req, res) {
-    try {
-        const urlCode = req.params.urlCode;
+const getUrl = async (req, res) => {
+  try {
+    let { urlCode } = req.params;
 
-        const cachedData = await getData(`${urlCode}`);
-        if (cachedData) {
-            return res.send({ status: true, data: cachedData });
-        }
-
-        const url = await urlModel.findOne({ urlCode: urlCode });
-        if (!url) {
-            return res.status(400).send({ status: false, message: "Please provide a valid urlCode" });
-        }
-
-        return res.status(302).redirect(url.longUrl);
-    } catch (error) {
-        return res.status(500).send({ status: false, message: error.message });
+    if (!urlCode) return res.status(400).send({ status: false, message: "plz provide urlCode" });
+    
+    let getDataCache = await GET_ASYNC(urlCode)
+   
+    if(getDataCache) {
+      console.log("hit");
+      return res.status(302).redirect(getDataCache)
     }
-}
+      
+    let result = await urlModel.findOne({ urlCode: urlCode });
+    
+    if (!result)return res.status(404).send({status: false,message: `URL Not found with this code ${urlCode}`});
 
-module.exports = { shortingUrl, getUrl };
+    if (result) {
+      await SET_ASYNC(urlCode,JSON.stringify(result.longUrl),"EX",100000)
+      return res.status(302).redirect(result.longUrl);
+    }
+
+  } catch (error) {
+
+    console.log("error in geturl", error.message);
+
+    res.send({ error: error.message });
+
+  }
+};
