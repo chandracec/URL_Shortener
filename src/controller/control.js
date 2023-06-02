@@ -5,18 +5,16 @@ const shortId = require('shortid');
 const redis = require("redis");
 const { promisify } = require("util");
 
-// Create Redis client
 const client = redis.createClient({
   host: 'redis-12531.c264.ap-south-1-1.ec2.cloud.redislabs.com',
   port: 12531,
   password: 'TzQYQ4tNsBYJqRAVU5hZZt46NxmDSWXm'
 });
 
-// Redis client event handlers
 client.on('error', console.error);
 client.on('connect', () => console.log('Connected to Redis'));
 
-// Promisify Redis commands for async/await usage
+
 const setCache = promisify(client.SET).bind(client);
 const getCache = promisify(client.GET).bind(client);
 
