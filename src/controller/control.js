@@ -15,10 +15,10 @@ const shortingUrl=async function(req,res){
        const urlExists=await urlModel.findOne({longUrl:longUrl})
       
        if(urlExists){
-       return res.status(200).send({status:true,data:urlExists})
+        return res.status(200).send({status:true,data:urlExists})
        }
     
-       const urlCode=shortId.generate(longUrl)
+       const urlCode = shortId.generate(longUrl)
        const shortUrl=`http://localhost:3000/${urlCode}`
         
        const newUrl=await urlModel.create({longUrl,shortUrl,urlCode});
