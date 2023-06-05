@@ -4,12 +4,12 @@ const route = require("../src/route/routes.js");
 
 require('dotenv').config();
 
-const {MONGODB_CONNECT} = process.env
+const {PORT,MONGODB_CONNECT} = process.env
 
 const app = express();
 
 app.use(express.json());
-
+mongoose.set('strictQuery', true);
 mongoose
   .connect(
     MONGODB_CONNECT,
@@ -24,6 +24,6 @@ mongoose
 
 app.use("/", route);
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log(`app running on 3000`);
 });
