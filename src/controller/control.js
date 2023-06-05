@@ -70,6 +70,7 @@ const shortUrl = async (req, res) => {
     const data = await urlModel.create({ longUrl, shortUrl, urlCode });
 
     const { _id, __v, ...Data } = data._doc;
+    console.log(Data)
 
     //set cache
     await setCache(longUrl, JSON.stringify(Data), "EX", 86400);
@@ -102,7 +103,7 @@ const getUrl = async (req, res) => {
     }
 
     await setCache(urlCode, JSON.stringify(url), "EX", 86400);
-    return res.status(303).redirect(url.longUrl);
+    return res.status(302).redirect(url.longUrl);
   } catch (error) {
     return res.status(500).send({ status: false, message: error.message });
   }
