@@ -10,10 +10,11 @@
     "engines": {
         "npm": ">=8.0.0 <10.0.0",
         "node": ">=16.0.0 <19.4.2"
-      },
+    },
     "author": "Saurabh Digambar, Chandrakant Tiwari, Jasmeen  Desai,Kashi Sharma ",
     "license": "ISC",
     "dependencies": {
+        "dotenv": "^16.1.4",
         "express": "^4.18.2",
         "mongoose": "^6.8.3",
         "node-fetch": "^3.3.0",
