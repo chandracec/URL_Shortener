@@ -2,13 +2,17 @@ const express = require("express");
 const { default: mongoose } = require("mongoose");
 const route = require("../src/route/routes.js");
 
+require('dotenv').config();
+
+const {MONGODB_CONNECT} = process.env
+
 const app = express();
 
 app.use(express.json());
 
 mongoose
   .connect(
-    "mongodb+srv://saurabhdigambar8:X1UED3V4eKh2u9M4@cluster0.tlt0rzr.mongodb.net/group3Database",
+    MONGODB_CONNECT,
     { useNewUrlParser: true }
   )
   .then(() => {

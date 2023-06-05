@@ -4,11 +4,15 @@ const validUrl = require("valid-url");
 const shortId = require("shortid");
 const redis = require("redis");
 const { promisify } = require("util");
+require('dotenv').config();
+
+const {host , password , MONGODB_CONNECT} = process.env
+
 
 const client = redis.createClient({
-  host: "redis-12531.c264.ap-south-1-1.ec2.cloud.redislabs.com",
+  host: host,
   port: 12531,
-  password: "TzQYQ4tNsBYJqRAVU5hZZt46NxmDSWXm",
+  password: password,
 });
 
 client.on("error", console.error);
