@@ -7,6 +7,10 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "npx nodemon src/index.js"
     },
+    "repository":{
+    "type":"git",
+    "url":"git+https://github.com/chandracec/URL_Shortener.git"
+  },
     "engines": {
         "npm": ">=8.0.0 <10.0.0",
         "node": ">=16.0.0 <19.4.2"
